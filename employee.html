@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MineGuard - Employee</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #e2e8f0;
+        }
+        .bg-overlay {
+            background: url('https://www.transparenttextures.com/patterns/dark-mosaic.png');
+            opacity: 0.1;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .navbar {
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        .footer {
+            background: #111827;
+            margin-top: auto;
+        }
+        .employee-card {
+            background: rgba(31, 41, 55, 0.8);
+            transition: transform 0.3s ease;
+        }
+        .employee-card:hover {
+            transform: translateY(-5px);
+        }
+        .profile-icon {
+            width: 64px;
+            height: 64px;
+            background: #4b5563;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-overlay"></div>
+    <!-- Navigation Bar -->
+    <nav class="navbar fixed top-0 w-full shadow-lg z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="index.html" class="logo text-2xl text-indigo-400">MineGuard</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-300 hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                    <a href="employee.html" class="text-gray-300 hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium">Employee</a>
+                    <a href="alert.html" class="text-gray-300 hover:text-indigo-400 px-3 py-2 rounded-md text-sm font-medium">Alert</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Employee Cards -->
+    <main class="flex-grow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+            <h1 class="text-3xl sm:text-4xl font-bold text-indigo-300 mb-8">Employee Directory</h1>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Employee Card 1 -->
+                <div class="employee-card rounded-lg shadow-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="profile-icon mr-4">JD</div>
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-200">John Doe</h2>
+                            <p class="text-gray-400">Mining Engineer</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 mb-4">Employee ID: 25</p>
+                    <a href="status.html" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm">View Status</a>
+                </div>
+                <!-- Employee Card 2 -->
+                <div class="employee-card rounded-lg shadow-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="profile-icon mr-4">JS</div>
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-200">Jane Smith</h2>
+                            <p class="text-gray-400">Safety Officer</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 mb-4">Employee ID: 26</p>
+                    <a href="status1.html" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm">View Status</a>
+                </div>
+                <!-- Employee Card 3 -->
+                <div class="employee-card rounded-lg shadow-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="profile-icon mr-4">MB</div>
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-200">Mike Brown</h2>
+                            <p class="text-gray-400">Equipment Operator</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 mb-4">Employee ID: 27</p>
+                    <a href="status2.html" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-md text-sm">View Status</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <p class="text-center text-gray-400 text-sm">
+                &copy; 2025 MineGuard. All rights reserved.
+            </p>
+        </div>
+    </footer>
+</body>
+</html>
