@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>DIY Ventilator Control</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f4f8;
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    h2 { text-align: center; }
+    label { display: block; margin-top: 15px; }
+    select, input {
+      width: 100%; padding: 8px;
+      margin-top: 5px; border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 20px; padding: 10px 20px;
+      border: none; border-radius: 5px;
+      background-color: #3498db; color: white;
+      font-size: 16px; cursor: pointer;
+    }
+    button.stop {
+      background-color: #e74c3c;
+    }
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2>DIY Ventilator Control</h2>
+
+  <label>ESP IP Address:</label>
+  <input type="text" id="ip" placeholder="e.g. 192.168.1.50" required />
+
+  <label>Patient Type:</label>
+  <select id="patient">
+    <option value="child">Child</option>
+    <option value="adult" selected>Adult</option>
+    <option value="elderly">Elderly</option>
+  </select>
+
+  <label>Breathing Rate (breaths per minute):</label>
+  <input type="number" id="bpm" value="12" min="5" max="40" />
+
+  <label>Blood Group:</label>
+  <select>
+    <option>A+</option>
+    <option>A-</option>
+    <option>B+</option>
+    <option>O+</option>
+    <option>O-</option>
+    <option>AB+</option>
+  </select>
+
+  <label>Symptoms:</label>
+  <input type="text" placeholder="e.g. cough, fever (just for show)" />
+
+  <button onclick="startVentilator()">Start Ventilation</button>
+  <button class="stop" onclick="stopVentilator()">Stop</button>
+
+  <div id="status"></div>
+
+  <script>
+    function startVentilator() {
+      const ip = document.getElementById("ip").value.trim();
+      const patient = document.getElementById("patient").value;
+      const bpm = parseInt(document.getElementById("bpm").value);
+
+      if (!ip || !bpm) {
+        alert("Please enter IP and BPM");
+        return;
+      }
+
+      let angle;
+      switch (patient) {
+        case "child": angle = 40; break;
+        case "adult": angle = 180; break;
+        case "elderly": angle = 60; break;
+      }
+
+      const interval = Math.floor((60 / bpm) * 1000); // Convert BPM to ms
+
+      const url = `http://${ip}/start?angle=${angle}&interval=${interval}`;
+      fetch(url)
+        .then(res => res.text())
+        .then(data => {
+          document.getElementById("status").innerText = "✅ " + data;
+        })
+        .catch(err => {
+          document.getElementById("status").innerText = "❌ Failed: " + err;
+        });
+    }
+
+    function stopVentilator() {
+      const ip = document.getElementById("ip").value.trim();
+      if (!ip) {
+        alert("Enter IP address first");
+        return;
+      }
+
+      fetch(`http://${ip}/stop`)
+        .then(res => res.text())
+        .then(data => {
+          document.getElementById("status").innerText = "⛔ " + data;
+        })
+        .catch(err => {
+          document.getElementById("status").innerText = "❌ Failed: " + err;
+        });
+    }
+  </script>
+</body>
+</html>

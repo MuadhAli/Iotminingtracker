@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gas Leakage Detector System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #e5e7eb;
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            transition: transform 0.3s ease;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="font-sans min-h-screen">
+    <!-- Navigation Bar -->
+    <nav class="bg-gray-900 p-4 shadow-lg sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-400">GasSafe System</h1>
+            <div class="space-x-4">
+                <a href="#home" class="text-gray-300 hover:text-blue-400 transition">Home</a>
+                <a href="#emergency" class="text-gray-300 hover:text-blue-400 transition">Emergency</a>
+                <a href="#controls" class="text-gray-300 hover:text-blue-400 transition">Controls</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Page -->
+    <section id="home" class="container mx-auto p-6">
+        <div class="text-center py-10">
+            <h2 class="text-4xl font-bold text-white mb-4">Gas Leakage Detector System</h2>
+            <p class="text-lg text-gray-300 max-w-2xl mx-auto">
+                Monitor and control gas leakage in real-time with our advanced ESP8266-based system. Automatically manage gas regulator valves, receive critical alerts, and ensure safety with emergency notifications.
+            </p>
+            <div class="mt-6">
+                <a href="#controls" class="bg-blue-500 text-white px-6 py-2 rounded-full hover:bg-blue-600 transition">View Controls</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emergency Page -->
+    <section id="emergency" class="container mx-auto p-6 hidden">
+        <h2 class="text-3xl font-bold text-white mb-6">Emergency Alerts</h2>
+        <p class="text-lg text-gray-300 mb-6">Notify responsible parties instantly in case of a gas leak or fire.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <button onclick="sendAlert('Neighbor')" class="bg-red-600 text-white p-4 rounded-lg glass-effect hover:bg-red-700 transition card-hover">Alert Neighbor</button>
+            <button onclick="sendAlert('Fire Department')" class="bg-red-600 text-white p-4 rounded-lg glass-effect hover:bg-red-700 transition card-hover">Alert Fire Department</button>
+            <button onclick="sendAlert('Police')" class="bg-red-600 text-white p-4 rounded-lg glass-effect hover:bg-red-700 transition card-hover">Alert Police</button>
+        </div>
+    </section>
+
+    <!-- Controls Page -->
+    <section id="controls" class="container mx-auto p-6 hidden">
+        <h2 class="text-3xl font-bold text-white mb-6">System Controls</h2>
+        <p class="text-lg text-gray-300 mb-6">Select a sensor to view detailed gas leakage status.</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-gray-800 p-6 rounded-lg glass-effect cursor-pointer card-hover" onclick="showStatus(1)">
+                <h3 class="text-xl font-semibold text-blue-400">Sensor 1</h3>
+                <p class="text-gray-300">Kitchen Area</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg glass-effect cursor-pointer card-hover" onclick="showStatus(2)">
+                <h3 class="text-xl font-semibold text-blue-400">Sensor 2</h3>
+                <p class="text-gray-300">Storage Room</p>
+            </div>
+            <div class="bg-gray-800 p-6 rounded-lg glass-effect cursor-pointer card-hover" onclick="showStatus(3)">
+                <h3 class="text-xl font-semibold text-blue-400">Sensor 3</h3>
+                <p class="text-gray-300">Basement</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Status Page -->
+    <section id="status" class="container mx-auto p-6 hidden">
+        <h2 class="text-3xl font-bold text-white mb-6">Gas Leakage Status</h2>
+        <div id="status-content" class="bg-gray-800 p-6 rounded-lg glass-effect">
+            <p class="text-gray-300">Loading status...</p>
+        </div>
+        <button onclick="goBack()" class="mt-6 bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition">Back to Controls</button>
+    </section>
+
+    <script>
+        // Dummy data for when no actual data is available
+        const dummyData = {
+            1: { status: "normal", value: 50, valve: "open" },
+            2: { status: "leak", value: 300, valve: "closed" },
+            3: { status: "fire", value: 500, valve: "closed" }
+        };
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        // Handle navigation via hash
+        window.addEventListener('hashchange', () => {
+            const section = window.location.hash.slice(1) || 'home';
+            showSection(section);
+        });
+
+        // Initial load
+        showSection(window.location.hash.slice(1) || 'home');
+
+        // Fetch data from ESP8266
+        async function fetchGasData(sensorId) {
+            try {
+                // Replace with your ESP8266 IP address
+                const response = await fetch('http://your-esp8266-ip-address/data', { timeout: 5000 });
+                if (!response.ok) throw new Error('Network response was not ok');
+                const data = await response.json();
+                // Assuming JSON format: { sensorId: { status: "normal/leak/fire", value: number, valve: "open/closed" } }
+                return data[sensorId] || dummyData[sensorId] || { status: "unknown", value: 0, valve: "unknown" };
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                // Return dummy data as fallback
+                return dummyData[sensorId] || { status: "error", value: 0, valve: "error" };
+            }
+        }
+
+        // Show status page for a sensor
+        async function showStatus(sensorId) {
+            showSection('status');
+            const data = await fetchGasData(sensorId);
+            const content = `
+                <h3 class="text-xl font-semibold text-blue-400">Sensor ${sensorId} Status</h3>
+                <p class="text-gray-300"><strong>Leakage Status:</strong> <span class="${data.status === 'normal' ? 'text-green-400' : 'text-red-400'}">${data.status}</span></p>
+                <p class="text-gray-300"><strong>Gas Value:</strong> ${data.value} ppm</p>
+                <p class="text-gray-300"><strong>Valve Status:</strong> ${data.valve}</p>
+                ${data.status === 'leak' ? '<p class="text-red-400 font-semibold">Warning: Gas leakage detected! Valve turned off automatically.</p>' : ''}
+                ${data.status === 'fire' ? '<p class="text-red-400 font-semibold">Critical: Fire detected! Emergency alerts sent.</p>' : ''}
+            `;
+            document.getElementById('status-content').innerHTML = content;
+        }
+
+        // Go back to controls
+        function goBack() {
+            window.location.hash = 'controls';
+        }
+
+        // Send emergency alert (placeholder)
+        function sendAlert(recipient) {
+            alert(`Alert sent to ${recipient}!`);
+            // Implement actual alert logic (e.g., API call to send SMS/email)
+        }
+    </script>
+</body>
+</html>
